@@ -45,7 +45,7 @@ LinkedList.prototype.cycle = function(index, value) {
         // console.log(node.next)
         if (node.next === null) {
           // console.log(this.head.next)
-          newNode.next = this.head.next.next;
+          newNode.next = this.head.next;
         } else {
           newNode.next = node.next;
         }
@@ -133,14 +133,15 @@ LinkedList.prototype.halfway2 = function () {
 };
 
 var cycleLL = new LinkedList();
-cycleLL.insert(0, 1)
-cycleLL.insert(1, 2)
-cycleLL.insert(2, 5)
-cycleLL.insert(3, 20)
-cycleLL.insert(4, 25)
-cycleLL.insert(5, 30)
-cycleLL.insert(6, 35)
-cycleLL.insert(7, 40)
+cycleLL.insert(0, 0)
+cycleLL.insert(1, 1)
+cycleLL.insert(2, 2)
+// cycleLL.insert(3, 20)
+// cycleLL.insert(4, 25)
+// cycleLL.insert(5, 30)
+// cycleLL.insert(6, 35)
+// cycleLL.insert(7, 40)
+cycleLL.cycle(3, 'uh-oh')
 
 
 var myLL = new LinkedList();
@@ -194,13 +195,52 @@ LinkedList.prototype.cycleCheck = function () {
   //if no length then return index error
   if (!this.length) return 'index error';
   var slow = this.head;
-  var fast = this.head.next;
+  var fast = this.head;
+  var cycleDetected = false;
+
   while(fast && fast.next) {
     slow = slow.next;
     fast = fast.next.next;
-    if (slow === fast) return 'cycle detected at ' + slow.value + ' before ' + slow.next.value;
+    if (slow === fast) {
+      cycleDetected = true;
+      break;
+    }
   }
-  return 'no cycle detected';
+  if (!cycleDetected) return 'no cycle detected';
+
+  // Next step of Floyd's Warshall -- determine loop length
+  var counter = 0;
+  do {
+    counter++;
+    slow = slow.next;
+    fast = fast.next.next;
+  } while (fast !== slow);
+
+  // console.log(counter);
+
+  // Next step: find beginning of loop
+  // move fast to head; increment it by 1 instead of 2
+  // where fast and slow meet is start of loop
+  slow = this.head;
+  do {
+    slow = slow.next;
+    fast = fast.next;
+  } while (slow !== fast);
+
+  console.log(slow.value);
+
+  // Next step: advance the pointer by counter - 1 steps
+  // That's end of loop
+  // fix last pointer to point at null
+  for (let i = 0; i < counter-1; i++) {
+    slow = slow.next;
+  }
+  console.log(slow);
+  slow.next = null;
+  console.log(this.output())
+
+
+
 };
 
 
