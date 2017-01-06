@@ -26,6 +26,35 @@ LinkedList.prototype.insert = function(index, value) {
     this.length++;
 };
 
+LinkedList.prototype.cycle = function(index, value) {
+    if (index < 0 || index > this.length) {
+        throw new Error('Index error');
+    }
+
+    var newNode = {
+        value: value
+    };
+
+    if (index === 0) {
+        newNode.next = this.head;
+        this.head = newNode;
+    }
+    else {
+        // Find the node which we want to insert after
+        var node = this._find(index - 1);
+        // console.log(node.next)
+        if (node.next === null) {
+          // console.log(this.head.next)
+          newNode.next = this.head.next.next;
+        } else {
+          newNode.next = node.next;
+        }
+        node.next = newNode;
+    }
+
+    this.length++;
+};
+
 LinkedList.prototype._find = function(index) {
     var node = this.head;
     for (var i=0; i<index; i++) {
@@ -103,6 +132,17 @@ LinkedList.prototype.halfway2 = function () {
 
 };
 
+var cycleLL = new LinkedList();
+cycleLL.insert(0, 1)
+cycleLL.insert(1, 2)
+cycleLL.insert(2, 5)
+cycleLL.insert(3, 20)
+cycleLL.insert(4, 25)
+cycleLL.insert(5, 30)
+cycleLL.insert(6, 35)
+cycleLL.insert(7, 40)
+
+
 var myLL = new LinkedList();
 myLL.insert(0, 1)
 myLL.insert(1, 2)
@@ -130,11 +170,46 @@ LinkedList.prototype.thirdElement = function() {
 
 // Write an algorithm to reverse a linked list
 LinkedList.prototype.reverse = function () {
+// create a new LL (this will be returned)
+// take the first item from original list and add it to new list
+// take item by item from original list and add to beginning of new list
+  if (this.length <= 1) {
+    return this;
+  }
+  var newLL = new LinkedList();
+  var oldList = this.head;
 
+  while (oldList) {
+    newLL.insert(0, oldList.value)
+    oldList = oldList.next;
+  }
+
+  return newLL;
 };
 
 // Write an algorithm to find whether a linked list has a cycle --
 // whether a node in the list has its next value pointing to an earlier node.
 LinkedList.prototype.cycleCheck = function () {
-
+  //if LL had a cycle and there were two pointers, they would overlap at some point
+  //if no length then return index error
+  if (!this.length) return 'index error';
+  var slow = this.head;
+  var fast = this.head.next;
+  while(fast && fast.next) {
+    slow = slow.next;
+    fast = fast.next.next;
+    if (slow === fast) return 'cycle detected at ' + slow.value + ' before ' + slow.next.value;
+  }
+  return 'no cycle detected';
 };
+
+
+LinkedList.prototype.output = function () {
+  var output = "";
+  var list = this.head;
+  while (list) {
+    output += list.value + ', ';
+    list = list.next;
+  }
+  return output;
+}
