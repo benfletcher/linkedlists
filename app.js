@@ -59,15 +59,7 @@ LinkedList.prototype.remove = function(index) {
     this.length--;
 };
 
-var myLL = new LinkedList();
-myLL.insert(0, 1)
-myLL.insert(1, 2)
-myLL.insert(2, 5)
-myLL.insert(3, 20)
-myLL.insert(4, 25)
-myLL.insert(5, 30)
-myLL.insert(6, 35)
-myLL.insert(7, 40)
+
 
 console.log(myLL)
 
@@ -89,5 +81,60 @@ LinkedList.prototype.halfway = function () {
   }
 
   return slow.value
+
+};
+
+LinkedList.prototype.halfway2 = function () {
+  // two pointers, one at double speed, one at single speed
+  // when fast pointer reaches the end, slow pointer is at the halfway point
+  if (!this.head) {
+    return null;
+  }
+
+  var slow = this.head;
+  var fast = this.head.next;
+
+  while (fast && fast.next) {
+    slow = slow.next;
+    fast = fast.next.next;
+  }
+
+  return slow;
+
+};
+
+var myLL = new LinkedList();
+myLL.insert(0, 1)
+myLL.insert(1, 2)
+myLL.insert(2, 5)
+myLL.insert(3, 20)
+myLL.insert(4, 25)
+myLL.insert(5, 30)
+myLL.insert(6, 35)
+myLL.insert(7, 40)
+
+// Write an algorithm to find the third element from the end of a linked list
+// without using the .length property
+LinkedList.prototype.thirdElement = function() {
+  if (!this.head || !this.head.next || !this.head.next.next) {
+    return 'missing index';
+  }
+  var slow = this.head;
+  var fast = this.head.next.next.next;
+  while (fast) {
+    slow = slow.next;
+    fast = fast.next;
+  }
+  return slow;
+};
+
+// Write an algorithm to reverse a linked list
+LinkedList.prototype.reverse = function () {
+
+};
+
+// Write an algorithm to find whether a linked list has a cycle --
+// whether a node in the list has its next value pointing to an earlier node.
+LinkedList.prototype.cycleCheck = function () {
 
 };
