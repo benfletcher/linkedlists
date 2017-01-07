@@ -26,6 +26,10 @@ LinkedList.prototype.insert = function(index, value) {
     this.length++;
 };
 
+// just a copy of the 'insert()' method except this one will create a
+// problematic 'cyclical' list if the node is inserted at the end of the list
+// no attempt was made to refactor this since it wasn't really part of the
+// exercises.
 LinkedList.prototype.cycle = function(index, value) {
     if (index < 0 || index > this.length) {
         throw new Error('Index error');
@@ -42,10 +46,11 @@ LinkedList.prototype.cycle = function(index, value) {
     else {
         // Find the node which we want to insert after
         var node = this._find(index - 1);
-        // console.log(node.next)
+
+        // if inserting at the end of the list, link new node back to
+        // arbitrary node near beginning of list
         if (node.next === null) {
-          // console.log(this.head.next)
-          newNode.next = this.head.next;
+          newNode.next = this.head.next.next;
         } else {
           newNode.next = node.next;
         }
@@ -88,32 +93,7 @@ LinkedList.prototype.remove = function(index) {
     this.length--;
 };
 
-
-
-console.log(myLL)
-
 LinkedList.prototype.halfway = function () {
-  // two pointers, one at double speed, one at single speed
-  // when fast pointer reaches the end, slow pointer is at the halfway point
-  var slow = this;
-  var fast = this.head;
-  console.log(this);
-
-  while (fast !== null && fast.next !== null) {
-    if (slow === this) {
-      slow = this.head;
-    } else {
-      slow = slow.next;
-    }
-    fast = fast.next;
-    fast = fast.next;
-  }
-
-  return slow.value
-
-};
-
-LinkedList.prototype.halfway2 = function () {
   // two pointers, one at double speed, one at single speed
   // when fast pointer reaches the end, slow pointer is at the halfway point
   if (!this.head) {
@@ -129,19 +109,18 @@ LinkedList.prototype.halfway2 = function () {
   }
 
   return slow;
-
 };
 
 var cycleLL = new LinkedList();
 cycleLL.insert(0, 0)
 cycleLL.insert(1, 1)
 cycleLL.insert(2, 2)
-// cycleLL.insert(3, 20)
-// cycleLL.insert(4, 25)
-// cycleLL.insert(5, 30)
-// cycleLL.insert(6, 35)
-// cycleLL.insert(7, 40)
-cycleLL.cycle(3, 'uh-oh')
+cycleLL.insert(3, 20)
+cycleLL.insert(4, 25)
+cycleLL.insert(5, 30)
+cycleLL.insert(6, 35)
+cycleLL.insert(7, 40)
+cycleLL.cycle(8, 'uh-oh')
 
 
 var myLL = new LinkedList();
@@ -157,15 +136,19 @@ myLL.insert(7, 40)
 // Write an algorithm to find the third element from the end of a linked list
 // without using the .length property
 LinkedList.prototype.thirdElement = function() {
+
   if (!this.head || !this.head.next || !this.head.next.next) {
-    return 'missing index';
+    return 'list too short';
   }
+
   var slow = this.head;
   var fast = this.head.next.next.next;
+
   while (fast) {
     slow = slow.next;
     fast = fast.next;
   }
+
   return slow;
 };
 
@@ -188,8 +171,7 @@ LinkedList.prototype.reverse = function () {
   return newLL;
 };
 
-// Write an algorithm to find whether a linked list has a cycle --
-// whether a node in the list has its next value pointing to an earlier node.
+// detect and fix cyclical list problem
 LinkedList.prototype.cycleCheck = function () {
   //if LL had a cycle and there were two pointers, they would overlap at some point
   //if no length then return index error
@@ -235,15 +217,13 @@ LinkedList.prototype.cycleCheck = function () {
   for (let i = 0; i < counter-1; i++) {
     slow = slow.next;
   }
-  console.log(slow);
+
   slow.next = null;
-  console.log(this.output())
 
-
-
+  return 'cyclical problem corrected'
 };
 
-
+// don't run this on a cyclical list!
 LinkedList.prototype.output = function () {
   var output = "";
   var list = this.head;
